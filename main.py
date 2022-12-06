@@ -85,23 +85,28 @@ class PacManGame(QWidget):
         # self.checkMap.start(self.speed)
         # self.checkMap.timeout.connect(self.displaytMap)
 
-        self.lab = QLabel(self)
-        self.lab.resize(30, 30)
-        self.map_img_0 = QPixmap("images/Map1.png")
-        self.map_img_0 = self.map_img_0.scaled(30, 30)
-        self.lab.setPixmap(QPixmap(self.map_img_0))
+        self.setMapImage()
+
 
     def setMapImage(self):
-        map_img_layout = QGridLayout()
+        self.map_img_layout = QGridLayout()
+        self.map_img_label = [list() for _ in range(len(self.map_img_info))]
+        self.map_img = [list() for _ in range(len(self.map_img_info))]
         for x in range(len(self.map_img_info)):
             for y in range(len(self.map_obj_info[x])):
-                self.map_
-
-        self.setLayout()
-        self.map_img_0 = QPixmap()
-        self.map_img_0.load("/images/Map0.png")
-        self.map_img_0 = self.map_img_0.scaled(30, 30)
-        self.lbl.setPix
+                # Make Label For Image
+                self.map_img_label[x].append(QLabel())
+                self.map_img_label[x][y].resize(30, 30)
+                # Load, Resize, and Rotate Image
+                file = "images/Map" + str(self.map_img_info[x][y][0]) + ".png"
+                img = QPixmap(file).scaled(30, 30)
+                img = img.transformed(QTransform().rotate(self.map_img_info[x][y][1] * 90))
+                self.map_img[x].append(img)
+                self.map_img_label[x][y].setPixmap(self.map_img[x][y])
+                self.map_img_layout.addWidget(self.map_img_label[x][y], x, y)
+        self.map_img_layout.setContentsMargins(0, 0, 0, 0)
+        self.map_img_layout.setSpacing(0)
+        self.setLayout(self.map_img_layout)
 
 
     def displaytMap(self):
