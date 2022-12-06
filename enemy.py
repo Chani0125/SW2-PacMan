@@ -1,9 +1,11 @@
 class Ghost:
 
-    def __init__(self, direct, shape):
+    def __init__(self, direct, shape, x, y):
         self.direct = direct
         self.shape = shape
         self.shapeChange = True
+        self.x = x
+        self.y = y
 
     def changeShape(self):
         if self.shapeChange:
@@ -24,3 +26,11 @@ class Ghost:
             return "Down"
         else:
             return "Up"
+
+    def getLocation(self):
+        return self.x, self.y
+
+    # def move(self):
+    #     self.direct =
+    #
+    # def changeDirect(self, *direct):
