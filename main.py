@@ -258,7 +258,13 @@ class PacManGame(QWidget):
                     return
             # PacMan Move
             fore_pacman_x, fore_pacman_y = self.pacman.getForeLocation()
-            if self.map_obj_info[fore_pacman_x][fore_pacman_y] == 0:
+            if fore_pacman_x == 9 and fore_pacman_y == 19:
+                if self.gameTime % self.PACMANINTERVAL == 0:
+                    self.pacman.setLocation(9, 0)
+            elif fore_pacman_x == 9 and fore_pacman_y == -1:
+                if self.gameTime % self.PACMANINTERVAL == 0:
+                    self.pacman.setLocation(9, 18)
+            elif self.map_obj_info[fore_pacman_x][fore_pacman_y] == 0:
                 self.pacman.setShapeChange(False)
             else:
                 self.pacman.setShapeChange(True)
@@ -270,6 +276,8 @@ class PacManGame(QWidget):
                     if self.gameTime % self.GHOSTINTERVAL == 0:
                         ghost_x, ghost_y = ghost.getLocation()
                         fore_ghost_x, fore_ghost_y = ghost.getForeLocation()
+                        # print(self.map_int_info[ghost_x][ghost_y])
+                        # print(self.map_obj_info[fore_ghost_x][fore_ghost_y])
                         if self.map_int_info[ghost_x][ghost_y] == 1 or self.map_obj_info[fore_ghost_x][fore_ghost_y] == 0:
                             d = self.map_int_direct_info[ghost_x][ghost_y]
                             if self.map_int_info[ghost_x][ghost_y] == 0:

@@ -33,6 +33,10 @@ class PacMan:
     def getLocation(self):
         return self.x, self.y
 
+    def setLocation(self, x, y):
+        self.x = x
+        self.y = y
+
     def move(self):
         if self.direct == 0:
             self.y += 1
