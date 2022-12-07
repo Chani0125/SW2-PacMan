@@ -10,7 +10,7 @@ class PacMan:
 
     def changeShape(self, idx=-1):
         if idx < 0:
-            if self.shapeChange:
+            if self.shapeChange or not self.shape == 1:
                 if self.increase:
                     self.shape += 1
                     if self.shape == 2:
