@@ -20,12 +20,6 @@ class Ghost:
     def setActive(self, active):
         self.active = active
 
-    def isPowerCookie(self):
-        return self.powerCookie
-
-    def setPowerCookie(self, powerCookie):
-        self.powerCookie = powerCookie
-
     def changeShape(self):
         if self.shapeChange:
             self.shape = 1 - self.shape
