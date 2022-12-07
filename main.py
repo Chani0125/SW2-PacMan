@@ -205,6 +205,7 @@ class PacManGame(QWidget):
         super().__init__()
         self.score = 0
         self.life = 3
+        self.num_cookie = 150
         self.setMapImage()
         self.pacman = PacMan()
         self.ghost = [
@@ -287,40 +288,43 @@ class PacManGame(QWidget):
             pacman_x, pacman_y = self.pacman.getLocation()
             if self.map_obj_info[pacman_x][pacman_y] == 2:
                 self.score += 10
+                self.num_cookie -= 1
                 self.map_obj_info[pacman_x][pacman_y] = 1
             elif self.map_obj_info[pacman_x][pacman_y] == 3:
-                pass
+                self.score += 50
+                self.num_cookie -= 1
+                self.map_obj_info[pacman_x][pacman_y] = 1
             # Spawn Rest Ghosts
             if self.gameTime == 50 - self.GHOSTINTERVAL:
                 self.ghost[1].setLocation(8, 9)
                 self.ghost[1].setDirect(3)
-            elif self.gameTime == 50:
+            if self.gameTime == 50:
                 self.ghost[1].setLocation(7, 9)
-            elif self.gameTime == 50 + self.GHOSTINTERVAL:
+            if self.gameTime == 50 + self.GHOSTINTERVAL:
                 self.ghost[1].setActive(True)
                 self.ghost[1].changeDirect(3)
                 self.ghost[1].move()
-            elif self.gameTime == 100 - self.GHOSTINTERVAL * 2:
+            if self.gameTime == 100 - self.GHOSTINTERVAL * 2:
                 self.ghost[2].setLocation(9, 9)
                 self.ghost[2].setDirect(0)
-            elif self.gameTime == 100 - self.GHOSTINTERVAL:
+            if self.gameTime == 100 - self.GHOSTINTERVAL:
                 self.ghost[2].setLocation(8, 9)
                 self.ghost[2].setDirect(3)
-            elif self.gameTime == 100:
+            if self.gameTime == 100:
                 self.ghost[2].setLocation(7, 9)
-            elif self.gameTime == 100 + self.GHOSTINTERVAL:
+            if self.gameTime == 100 + self.GHOSTINTERVAL:
                 self.ghost[2].setActive(True)
                 self.ghost[2].changeDirect(3)
                 self.ghost[2].move()
-            elif self.gameTime == 150 - self.GHOSTINTERVAL * 2:
+            if self.gameTime == 150 - self.GHOSTINTERVAL * 2:
                 self.ghost[3].setLocation(9, 9)
                 self.ghost[3].setDirect(1)
-            elif self.gameTime == 150 - self.GHOSTINTERVAL:
+            if self.gameTime == 150 - self.GHOSTINTERVAL:
                 self.ghost[3].setLocation(8, 9)
                 self.ghost[3].setDirect(3)
-            elif self.gameTime == 150:
+            if self.gameTime == 150:
                 self.ghost[3].setLocation(7, 9)
-            elif self.gameTime == 150 + self.GHOSTINTERVAL:
+            if self.gameTime == 150 + self.GHOSTINTERVAL:
                 self.ghost[3].setActive(True)
                 self.ghost[3].changeDirect(3)
                 self.ghost[3].move()
