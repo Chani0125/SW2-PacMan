@@ -278,7 +278,11 @@ class PacManGame(QWidget):
                         fore_ghost_x, fore_ghost_y = ghost.getForeLocation()
                         # print(self.map_int_info[ghost_x][ghost_y])
                         # print(self.map_obj_info[fore_ghost_x][fore_ghost_y])
-                        if self.map_int_info[ghost_x][ghost_y] == 1 or self.map_obj_info[fore_ghost_x][fore_ghost_y] == 0:
+                        if fore_ghost_x == 9 and fore_ghost_y == 19:
+                            ghost.setLocation(9, 0)
+                        elif fore_pacman_x == 9 and fore_ghost_y == -1:
+                            ghost.setLocation(9, 18)
+                        elif self.map_int_info[ghost_x][ghost_y] == 1 or self.map_obj_info[fore_ghost_x][fore_ghost_y] == 0:
                             d = self.map_int_direct_info[ghost_x][ghost_y]
                             if self.map_int_info[ghost_x][ghost_y] == 0:
                                 for i in range(len(d)):
