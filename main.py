@@ -8,8 +8,11 @@ from enemy import Ghost
 import traceback
 import winsound
 
+# 방향에 대한 튜플 정보는 모두 (동, 서, 남, 북)으로 저장되어있음 - 0: 못 감, 1: 갈 수 있음
+# 방향에 대한 정수 정보 - 0: 동, 1: 서, 2: 남, 3: 북
 
 class PacManGame(QWidget):
+    # 초기 맵 상태 저장
     # 0: 벽, 1: 빈 곳, 2: 쿠키, 3: 파워 쿠키
     map_init_obj_info = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -35,6 +38,7 @@ class PacManGame(QWidget):
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     ]
 
+    # 게임 진행 맵 상태 저장
     # 0: 벽, 1: 빈 곳, 2: 쿠키, 3: 파워 쿠키
     map_obj_info = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -60,6 +64,7 @@ class PacManGame(QWidget):
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     ]
 
+    # 교차로 정보 저장
     # 0: 길, 1: 교차로
     map_int_info = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -85,6 +90,7 @@ class PacManGame(QWidget):
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     ]
 
+    # 교차로 방향 정보 저장
     map_int_direct_info = [
         [(0, 0, 0, 0), (0, 0, 0, 0), (0, 0, 0, 0), (0, 0, 0, 0), (0, 0, 0, 0), (0, 0, 0, 0), (0, 0, 0, 0), (0, 0, 0, 0),
          (0, 0, 0, 0), (0, 0, 0, 0), (0, 0, 0, 0), (0, 0, 0, 0), (0, 0, 0, 0), (0, 0, 0, 0), (0, 0, 0, 0), (0, 0, 0, 0),
@@ -151,6 +157,7 @@ class PacManGame(QWidget):
          (0, 0, 0, 0), (0, 0, 0, 0), (0, 0, 0, 0)]
     ]
 
+    # 맵 이미지 파일 번호 및 회전 횟구 저장
     map_img_info = [
         [(3, 0), (2, 0), (2, 0), (2, 0), (2, 0), (2, 0), (2, 0), (2, 0), (2, 0), (4, 1), (2, 0), (2, 0), (2, 0), (2, 0),
          (2, 0), (2, 0), (2, 0), (2, 0), (3, 1)],
@@ -196,46 +203,46 @@ class PacManGame(QWidget):
          (2, 0), (2, 0), (2, 0), (2, 0), (3, 2)]
     ]
 
-    INTERVAL = 50
+    # 상수
 
+    # 게임 크기 간격
     DISPLAY_SIZE = 2
 
+    # 게임 속도 간격 (ms)
+    INTERVAL = 10
+
+    # 팩맨 움직임 간격
     PACMAN_INTERVAL = 6
 
-    GHOST_INTERVAL = 5
+    # 유령 움직임 간격
+    GHOST_INTERVAL = 50
 
+    # 유령 나오는 시간 간격
     GHOST_SPAWN_INTERVAL = 125
 
+    # 죽었을 때 모션 간격
     DEATH_INTERVAL = 3
 
     def __init__(self):
         super().__init__()
-        # Initial Setting
+
+        # 창 세팅
         self.setWindowTitle('PacMan Game')
 
+        # 기본 변수 세팅
         self.score = 0
         self.life = 3
         self.num_cookie = 150
-        self.setInitMapImage()
-        self.pacman = PacMan()
-        self.ghost = [
-            Ghost(1, 0, 7, 9, True),
-            Ghost(2, 0, 9, 9, False),
-            Ghost(3, 0, 9, 8, False),
-            Ghost(3, 0, 9, 10, False)
-        ]
         self.game_time = 0
         self.game_total_time = 0
         self.die = False
         self.over = False
         self.game_over = False
 
-        self.timer = QTimer(self)
-        self.timer.start(self.INTERVAL)
-        self.timer.timeout.connect(self.intervalEvent)
+        # 초기 화면 설정
+        self.setInitMapImage()
 
-    def resetGame(self):
-        self.resetMapImage()
+        # 팩맨 및 유령 객체 생성
         self.pacman = PacMan()
         self.ghost = [
             Ghost(1, 0, 7, 9, True),
@@ -244,100 +251,156 @@ class PacManGame(QWidget):
             Ghost(3, 0, 9, 10, False)
         ]
 
+        # INTERVAL마다 해당 함수 실행
+        self.timer = QTimer(self)
+        self.timer.start(self.INTERVAL)
+        self.timer.timeout.connect(self.intervalEvent)
+
+    # 게임을 초기 세팅으로 돌린다
+    # 팩맨이 유령에게 잡혔을 때 사용
+    def resetGame(self):
+        # 맵 초기화
+        self.resetMapImage()
+        # 객체 초기화
+        self.pacman = PacMan()
+        self.ghost = [
+            Ghost(1, 0, 7, 9, True),
+            Ghost(2, 0, 9, 9, False),
+            Ghost(3, 0, 9, 8, False),
+            Ghost(3, 0, 9, 10, False)
+        ]
+
+    # 회면에 OVER!을 출력하고 게임을 종료시킨다
     def gameOver(self):
+        # 게임의 중앙 부분의 Lable에 텍스트를 출력시킨다
         for y in range(7, 12):
+            # 텍스트 설정
             self.map_img_label[11][y].setText("OVER!"[y - 7])
+            # 스타일 설정
             over_font = self.map_img_label[11][y].font()
             over_font.setPointSize(18)
-            if self.over:
+            if self.over:  # 목숨이 다 없어져 게임 오버 된 경우
                 self.map_img_label[11][y].setStyleSheet("color: yellow;"
                                                         "background-color: #000000")
-            else:
+            else:  # 쿠키를 다 먹어 게임 오버 된 경우
                 self.map_img_label[11][y].setStyleSheet("color: green;"
                                                         "background-color: #000000")
             self.map_img_label[11][y].setFont(over_font)
             self.map_img_label[11][y].setAlignment(Qt.AlignCenter)
+        # 더 이상 게임이 움직이 않도록 해준다
         self.game_over = True
 
+    # 매 INTERVAL마다 실행되는 함수
+    # 게임의 핵심적인 역할을 수행한다
     def intervalEvent(self):
         try:
+            # 게임이 종료되었는지 확인
             if self.game_over:
                 return
+            # 게임이 시작될 때 까지 기다린다
             self.game_total_time += 1
-            if self.game_total_time > 3000 // self.INTERVAL:
+            if self.game_total_time > 3000 // self.INTERVAL:  # 게임 실행 후 3s 후 시작
                 self.game_time += 1
-                if self.num_cookie == 0:
-                    self.gameOver()
-                    return
-                # Display
+
+                # 팩맨이 죽은 경우
                 if self.die:
+                    # 죽은 이후 일정 시간을 기다린 후 일정 시간마다 팩맨의 모션을 변화시킨다
                     if self.game_time % self.DEATH_INTERVAL == 0 and self.game_time >= self.DEATH_INTERVAL * 2:
-                        if self.pacman.getShape() < 5:
+                        if self.pacman.getShape() < 5:  # 팩맨의 모양을 바꾼다
                             self.pacman.changeShape(self.pacman.getShape() + 1)
                         else:
-                            if self.over:
+                            if self.over:  # 게임이 종료되었다면 게임 종료 함수를 호출
                                 self.gameOver()
                                 return
-                            else:
+                            else:  # 목숨이 남아있다면 객체 배치 초기화
                                 self.resetGame()
                 else:
+                    # 객체들이 움직이는 것처럼 모양을 바꾼다
                     self.pacman.changeShape()
                     for ghost in self.ghost:
                         if self.game_time % 2 == 0:
                             ghost.changeShape()
+
+                # 화면 새로고침
                 self.displayMap()
                 self.displayEntities()
+
+                # 쿠키를 다 먹은 경우 종료 조건 표시
+                if self.num_cookie == 0:
+                    self.gameOver()
+                    return
+
+                # 팩맨이 죽은 경우 현재 함수 종료
                 if self.die:
                     return
-                # Check Touch
-                for ghost in self.ghost:
-                    if self.pacman.getLocation() == ghost.getLocation():
-                        self.die = True
-                        self.game_time = 0
-                        self.life -= 1
+
+                # 팩맨이 유령에게 잡힌 경우
+                for ghost in self.ghost:  # 각 유령 객체마다 비교
+                    if self.pacman.getLocation() == ghost.getLocation():  # 유령과 팩맨의 좌표가 일치하는 경우
+                        self.die = True  # 죽었을 때 게임 진행을 위해 True로 변경
+                        self.game_time = 0  # 게임 시간 초기화
+                        self.life -= 1  # 목숨 감소
                         winsound.PlaySound("musics/pacman_death.wav", winsound.SND_ASYNC)
+                        # 목숨을 모두 소진 한 경우
                         if self.life == 0:
                             self.over = True
                         return
-                # PacMan Move
-                fore_pacman_x, fore_pacman_y = self.pacman.getForeLocation()
+
+                # 팩맨의 이동
+                fore_pacman_x, fore_pacman_y = self.pacman.getForeLocation()  # 팩맨 앞 칸의 좌표
+                # 맵 좌우의 포탈에 대한 경우 (동쪽)
                 if fore_pacman_x == 9 and fore_pacman_y == 19:
                     if self.game_time % self.PACMAN_INTERVAL == 0:
                         self.pacman.setLocation(9, 0)
+                # 맵 좌우의 포탈에 대한 경우 (서쪽)
                 elif fore_pacman_x == 9 and fore_pacman_y == -1:
                     if self.game_time % self.PACMAN_INTERVAL == 0:
                         self.pacman.setLocation(9, 18)
+                # 팩맨 앞에 벽이 있는 경우
                 elif self.map_obj_info[fore_pacman_x][fore_pacman_y] == 0:
                     self.pacman.setShapeChange(False)
+                # 팩맨 앞에 벽이 없는 경우
                 else:
                     self.pacman.setShapeChange(True)
+                    # 일정한 시간마다 팩맨을 움직인다
                     if self.game_time % self.PACMAN_INTERVAL == 0:
                         self.pacman.move()
-                # Ghost Move
-                for ghost in self.ghost:
+
+                # 유령의 이동
+                for ghost in self.ghost:  # 각 유령 객체마다 실행
+                    # 활성화 된 유령이고 유령이 움직일 시간이면 유령이 움직임
                     if ghost.isActive() and self.game_time % self.GHOST_INTERVAL == 0:
-                        ghost_x, ghost_y = ghost.getLocation()
-                        fore_ghost_x, fore_ghost_y = ghost.getForeLocation()
+                        ghost_x, ghost_y = ghost.getLocation()  # 유령의 좌표 정보
+                        fore_ghost_x, fore_ghost_y = ghost.getForeLocation()  # 유령의 앞 칸의 좌표 정보
+                        # 맵 좌우의 포탈에 대한 경우 (동쪽)
                         if fore_ghost_x == 9 and fore_ghost_y == 19:
                             ghost.setLocation(9, 0)
+                        # 맵 좌우의 포탈에 대한 경우 (서쪽)
                         elif fore_pacman_x == 9 and fore_ghost_y == -1:
                             ghost.setLocation(9, 18)
-                        elif self.map_int_info[ghost_x][ghost_y] == 1 or self.map_obj_info[fore_ghost_x][fore_ghost_y] == 0:
+                        # 유령이 현재 교차로에 서 있거나 앞에 벽이 있는 경우
+                        elif self.map_int_info[ghost_x][ghost_y] == 1 or self.map_obj_info[fore_ghost_x][
+                            fore_ghost_y] == 0:
+                            # 현재 갈 수 있는 방향에 대한 튜플 정보
                             d = self.map_int_direct_info[ghost_x][ghost_y]
-                            if self.map_int_info[ghost_x][ghost_y] == 0:
+                            if self.map_int_info[ghost_x][ghost_y] == 0:  # 현재 교차로가 아닌 경우 (e.g. 꺽인 길)
                                 for i in range(len(d)):
+                                    # 갈 수 있는 길 중, 온 길이 아닌 곳을 택한다
                                     if d[i] == 1 and ghost.getOppositeDirect() != i:
                                         ghost.setDirect(i)
                                         break
-                            else:
-                                direct_bnum = 0
+                            else:  # 현재 교차로인 경우
+                                direct_bnum = 0  # 방향에 대한 이진 수
                                 for i in range(len(d)):
                                     if d[i] == 1 and ghost.getOppositeDirect() != i:
                                         direct_bnum += 2 ** i
+                                # 유령의 방향을 랜덤하게 정하도록 갈 수 있는 방향에 대한 이진수를 넘긴다
                                 ghost.changeDirect(direct_bnum)
+                        # 유령을 움직인다
                         ghost.move()
-                # Eat Cookie and Power Cookie
-                pacman_x, pacman_y = self.pacman.getLocation()
+
+                # 쿠키를 먹는 경우
+                pacman_x, pacman_y = self.pacman.getLocation()  # 팩맨의 현재 위치
                 if self.map_obj_info[pacman_x][pacman_y] == 2:
                     winsound.PlaySound("musics/pacman_chomp.wav", winsound.SND_ASYNC)
                     self.score += 10
