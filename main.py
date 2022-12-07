@@ -209,13 +209,13 @@ class PacManGame(QWidget):
     DISPLAY_SIZE = 2
 
     # 게임 속도 간격 (ms)
-    INTERVAL = 10
+    INTERVAL = 50
 
     # 팩맨 움직임 간격
     PACMAN_INTERVAL = 6
 
     # 유령 움직임 간격
-    GHOST_INTERVAL = 50
+    GHOST_INTERVAL = 5
 
     # 유령 나오는 시간 간격
     GHOST_SPAWN_INTERVAL = 125
