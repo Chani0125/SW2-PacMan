@@ -1,14 +1,16 @@
-import calendar
 import random
+
 
 class Ghost:
 
     def __init__(self, direct, shape, x, y, active):
-        self.direct = direct
+        # 유령의 모양과 관련된 변수
+        self.direct = direct  # 이동과 관련
         self.shape = shape
         self.shapeChange = True
         self.powerCookie = False
         self.active = active
+        # 유령의 위치
         self.x = x
         self.y = y
 
@@ -34,6 +36,7 @@ class Ghost:
     def getShape(self):
         return self.shape
 
+    # 이미지 파일을 불러오기 위해 문자 방향 출력
     def getDirect(self):
         if self.direct == 0:
             return "Right"
@@ -45,6 +48,7 @@ class Ghost:
             return "Up"
 
     def getLocation(self):
+        # IndexError를 방지하기 위해 % 사용
         return self.x % 21, self.y % 19
 
     def setLocation(self, x, y):
@@ -52,6 +56,7 @@ class Ghost:
         self.y = y
 
     def getForeLocation(self):
+        # IndexError를 방지하기 위해 % 사용
         if self.direct == 0:
             return self.x % 21, (self.y + 1) % 19
         elif self.direct == 1:
@@ -72,6 +77,8 @@ class Ghost:
             self.x -= 1
 
     def changeDirect(self, direct_bnum):
+        # 임의로 유령 방향 설정
+        # 방향에 대한 이진수를 리스트로 재구성
         direct = []
         for i in range(4):
             if (direct_bnum >> i) % 2 == 1:
@@ -80,6 +87,7 @@ class Ghost:
             self.direct = random.choice(direct)
 
     def getOppositeDirect(self):
+        # 유령이 바라보고 있는 반대 방향 출력
         if self.direct == 0:
             return 1
         elif self.direct == 1:

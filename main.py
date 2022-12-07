@@ -401,17 +401,19 @@ class PacManGame(QWidget):
 
                 # 쿠키를 먹는 경우
                 pacman_x, pacman_y = self.pacman.getLocation()  # 팩맨의 현재 위치
-                if self.map_obj_info[pacman_x][pacman_y] == 2:
+                if self.map_obj_info[pacman_x][pacman_y] == 2:  # 일반 쿠키를 먹는 경우
                     winsound.PlaySound("musics/pacman_chomp.wav", winsound.SND_ASYNC)
                     self.score += 10
                     self.num_cookie -= 1
                     self.map_obj_info[pacman_x][pacman_y] = 1
-                elif self.map_obj_info[pacman_x][pacman_y] == 3:
+                elif self.map_obj_info[pacman_x][pacman_y] == 3:  # 파워 쿠키를 먹는 경우
                     winsound.PlaySound("musics/pacman_chomp.wav", winsound.SND_ASYNC)
                     self.score += 50
                     self.num_cookie -= 1
                     self.map_obj_info[pacman_x][pacman_y] = 1
-                # Spawn Rest Ghosts
+
+                # 게임 시간 경과에 따라 유령을 소환한다
+                # 두 번 째 유령 소환
                 if self.game_time == self.GHOST_SPAWN_INTERVAL - self.GHOST_INTERVAL:
                     self.ghost[1].setLocation(8, 9)
                     self.ghost[1].setDirect(3)
@@ -421,6 +423,7 @@ class PacManGame(QWidget):
                     self.ghost[1].setActive(True)
                     self.ghost[1].changeDirect(3)
                     self.ghost[1].move()
+                # 세 번 째 유령 소환
                 if self.game_time == self.GHOST_SPAWN_INTERVAL * 2 - self.GHOST_INTERVAL * 2:
                     self.ghost[2].setLocation(9, 9)
                     self.ghost[2].setDirect(0)
@@ -433,6 +436,7 @@ class PacManGame(QWidget):
                     self.ghost[2].setActive(True)
                     self.ghost[2].changeDirect(3)
                     self.ghost[2].move()
+                # 네 번 째 유령 소환
                 if self.game_time == self.GHOST_SPAWN_INTERVAL * 3 - self.GHOST_INTERVAL * 2:
                     self.ghost[3].setLocation(9, 9)
                     self.ghost[3].setDirect(1)
@@ -448,9 +452,12 @@ class PacManGame(QWidget):
         except:
             print(traceback.format_exc())
 
+    # 초기 맵 세팅
     def setInitMapImage(self):
+        # GridLayout을 통해 GUI 표현
         self.map_img_layout = QGridLayout()
-        # Scoreboard
+
+        # 점수판
         self.scoreboard = QLabel(str(self.score))
         self.scoreboard.setStyleSheet("color: white;"
                                       "background-color: #000000")
@@ -460,12 +467,14 @@ class PacManGame(QWidget):
         self.scoreboard.setFont(scoreboard_font)
         self.scoreboard.resize(15 * self.DISPLAY_SIZE, 15 * self.DISPLAY_SIZE * 19)
         self.map_img_layout.addWidget(self.scoreboard, 0, 0, 1, 19)
-        # Map
+
+        # 메인 맵
         self.map_img_label = [list() for _ in range(len(self.map_img_info) + 1)]
         self.map_img = [list() for _ in range(len(self.map_img_info) + 1)]
         for x in range(len(self.map_img_info)):
             for y in range(len(self.map_obj_info[x])):
                 if x == 11 and (6 < y < 12):
+                    # READY 글자
                     self.map_img_label[x].append(QLabel("READY"[y - 7]))
                     ready_font = self.map_img_label[x][y].font()
                     ready_font.setPointSize(18)
@@ -473,12 +482,13 @@ class PacManGame(QWidget):
                                                            "background-color: #000000")
                     self.map_img_label[x][y].setFont(ready_font)
                     self.map_img_label[x][y].setAlignment(Qt.AlignCenter)
+                    # 좌표를 맞추기 위해 None을 삽입함
                     self.map_img[x].append(None)
                 else:
-                    # Make Label For Image
+                    # 맵 구조
                     self.map_img_label[x].append(QLabel())
                     self.map_img_label[x][y].resize(15 * self.DISPLAY_SIZE, 15 * self.DISPLAY_SIZE)
-                    # Load, Resize, and Rotate Image
+                    # 필요한 이미지 로드
                     info = self.map_obj_info[x][y]
                     if x == 15 and y == 9:
                         file = "images/PacMan1.png"
@@ -496,12 +506,14 @@ class PacManGame(QWidget):
                         file = "images/Cookie.png"
                     elif info == 3:
                         file = "images/PowerCookie.png"
-                    img = QPixmap(file).scaled(15 * self.DISPLAY_SIZE, 15 * self.DISPLAY_SIZE)
-                    img = img.transformed(QTransform().rotate(self.map_img_info[x][y][1] * 90))
+                    img = QPixmap(file).scaled(15 * self.DISPLAY_SIZE, 15 * self.DISPLAY_SIZE)  # 크기 조정
+                    img = img.transformed(QTransform().rotate(self.map_img_info[x][y][1] * 90))  # 회전
                     self.map_img[x].append(img)
                     self.map_img_label[x][y].setPixmap(self.map_img[x][y])
+                # 레이아웃에 위젯 추가
                 self.map_img_layout.addWidget(self.map_img_label[x][y], x + 1, y, 1, 1)
-        # PacMan Life
+
+        # 목숨 출력
         for y in range(3):
             self.map_img_label[21].append(QLabel())
             self.map_img_label[21][y].resize(15 * self.DISPLAY_SIZE, 15 * self.DISPLAY_SIZE)
@@ -513,19 +525,28 @@ class PacManGame(QWidget):
         self.map_img_label[21][3].setStyleSheet("color: white;"
                                                 "background-color: #000000")
         self.map_img_layout.addWidget(self.map_img_label[21][3], 22, 3, 1, 16)
-        # Trim White Spaces
+
+        # 레이아웃 공백 제거
         self.map_img_layout.setContentsMargins(0, 0, 0, 0)
         self.map_img_layout.setSpacing(0)
         self.setLayout(self.map_img_layout)
+
+        # 게임 시작 사운드 재생
         winsound.PlaySound("musics/pacman_beginning.wav", winsound.SND_ASYNC)
 
+    # 맵을 초기 세팅으로 되돌린다
+    # 팩맨이 유령에게 잡힌 경우 사용
     def resetMapImage(self):
-        self.game_time = 0
-        self.die = False
-        self.scoreboard.setText(str(self.score))
+        self.game_time = 0  # 게임 시간 초기화
+        self.die = False  # 죽음 여부 초기화
+        self.scoreboard.setText(str(self.score))  # 점수 갱신
+
+        # 객체 움직임 초기화
         for ghost in self.ghost:
             ghost.setActive(True)
         self.pacman.setShapeChange(True)
+
+        # 필요한 이미지 로드 및 회전 후 출력
         for x in range(len(self.map_img_info)):
             for y in range(len(self.map_obj_info[x])):
                 # Load, Resize, and Rotate Image
@@ -546,16 +567,20 @@ class PacManGame(QWidget):
                     file = "images/Cookie.png"
                 elif info == 3:
                     file = "images/PowerCookie.png"
-                img = QPixmap(file).scaled(15 * self.DISPLAY_SIZE, 15 * self.DISPLAY_SIZE)
-                img = img.transformed(QTransform().rotate(self.map_img_info[x][y][1] * 90))
+                img = QPixmap(file).scaled(15 * self.DISPLAY_SIZE, 15 * self.DISPLAY_SIZE)  #사이즈
+                img = img.transformed(QTransform().rotate(self.map_img_info[x][y][1] * 90))  # 회전
                 self.map_img[x].append(img)
                 self.map_img_label[x][y].setPixmap(self.map_img[x][y])
 
+    # 배경 맵 출력
     def displayMap(self):
+        # 점수판 갱신
         self.scoreboard.setText(str(self.score))
+
+        # 메인 맵 출력
         for x in range(len(self.map_img_info)):
             for y in range(len(self.map_obj_info[x])):
-                # Load, Resize, and Rotate Image
+                # 필요한 이미지 로드 및 회전 후 출력
                 info = self.map_obj_info[x][y]
                 if info < 2:
                     file = "images/Map" + str(self.map_img_info[x][y][0]) + ".png"
@@ -569,10 +594,12 @@ class PacManGame(QWidget):
                     ghost_idx = self.map_obj_info[x][y] - 5
                     file = "images/Ghost" + str(ghost_idx) + self.ghost[ghost_idx].getDirect() + str(
                         self.ghost[ghost_idx].getShape()) + ".png"
-                img = QPixmap(file).scaled(15 * self.DISPLAY_SIZE, 15 * self.DISPLAY_SIZE)
-                img = img.transformed(QTransform().rotate(self.map_img_info[x][y][1] * 90))
+                img = QPixmap(file).scaled(15 * self.DISPLAY_SIZE, 15 * self.DISPLAY_SIZE)  # 사이즈
+                img = img.transformed(QTransform().rotate(self.map_img_info[x][y][1] * 90))  # 회전
                 self.map_img[x][y] = img
                 self.map_img_label[x][y].setPixmap(self.map_img[x][y])
+
+        # 목숨 갯수 갱신
         for y in range(3):
             if self.life > y + 1:
                 file = "images/PacMan1.png"
@@ -582,15 +609,18 @@ class PacManGame(QWidget):
             self.map_img[21][y] = img
             self.map_img_label[21][y].setPixmap(self.map_img[21][y])
 
+    # 팩맨 및 유령 출력
+    # displayMap 함수 뒤에 사용
     def displayEntities(self):
-        # Display Ghost
+        # 유령 출력
         for i in range(len(self.ghost)):
             x, y = self.ghost[i].getLocation()
             file = "images/Ghost" + str(i) + self.ghost[i].getDirect() + str(self.ghost[i].getShape()) + ".png"
             img = QPixmap(file).scaled(15 * self.DISPLAY_SIZE, 15 * self.DISPLAY_SIZE)
             self.map_img[x][y] = img
             self.map_img_label[x][y].setPixmap(self.map_img[x][y])
-        # Display PacMan
+
+        # 팩맨 출력
         x, y = self.pacman.getLocation()
         file = "images/PacMan" + str(self.pacman.getShape()) + ".png"
         img = QPixmap(file).scaled(15 * self.DISPLAY_SIZE, 15 * self.DISPLAY_SIZE)
@@ -598,6 +628,7 @@ class PacManGame(QWidget):
         self.map_img[x][y] = img
         self.map_img_label[x][y].setPixmap(self.map_img[x][y])
 
+    # 방향키에 따라 팩맨 방향 조정
     def keyPressEvent(self, key_event):
         if key_event.key() == Qt.Key_Right:
             self.pacman.setDirect(0)
@@ -618,6 +649,7 @@ if __name__ == '__main__':
         game = PacManGame()
         game.show()
 
+        # 게임에 사용될 폰트 불러오기
         fontDB = QFontDatabase()
         fontDB.addApplicationFont("emulogic.ttf")
         app.setFont(QFont("emulogic"))
