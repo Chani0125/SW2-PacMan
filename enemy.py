@@ -7,6 +7,7 @@ class Ghost:
         self.direct = direct
         self.shape = shape
         self.shapeChange = True
+        self.powerCookie = False
         self.active = active
         self.x = x
         self.y = y
@@ -16,6 +17,12 @@ class Ghost:
 
     def setActive(self, active):
         self.active = active
+
+    def isPowerCookie(self):
+        return self.powerCookie
+
+    def setPowerCookie(self, powerCookie):
+        self.powerCookie = powerCookie
 
     def changeShape(self):
         if self.shapeChange:
@@ -38,7 +45,7 @@ class Ghost:
             return "Up"
 
     def getLocation(self):
-        return self.x, self.y
+        return self.x % 21, self.y % 19
 
     def setLocation(self, x, y):
         self.x = x
@@ -46,13 +53,13 @@ class Ghost:
 
     def getForeLocation(self):
         if self.direct == 0:
-            return self.x, self.y + 1
+            return self.x % 21, (self.y + 1) % 19
         elif self.direct == 1:
-            return self.x, self.y - 1
+            return self.x % 21, (self.y - 1) % 19
         elif self.direct == 2:
-            return self.x + 1, self.y
+            return (self.x + 1) % 21, self.y % 19
         else:
-            return self.x - 1, self.y
+            return (self.x - 1) % 21, self.y % 19
 
     def move(self):
         if self.direct == 0:

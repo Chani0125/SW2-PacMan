@@ -19,7 +19,7 @@ class PacMan:
                     self.shape -= 1
                     if self.shape == 0:
                         self.increase = True
-        elif idx < 5:
+        elif idx < 6:
             self.shape = idx
         else:
             print("Error: PacMac Shape Index Error")
@@ -31,7 +31,7 @@ class PacMan:
         return self.shape
 
     def getLocation(self):
-        return self.x, self.y
+        return self.x % 21, self.y % 19
 
     def setLocation(self, x, y):
         self.x = x
@@ -49,13 +49,13 @@ class PacMan:
 
     def getForeLocation(self):
         if self.direct == 0:
-            return self.x, self.y + 1
+            return self.x % 21, (self.y + 1) % 19
         elif self.direct == 1:
-            return self.x, self.y - 1
+            return self.x % 21, (self.y - 1) % 19
         elif self.direct == 2:
-            return self.x + 1, self.y
+            return (self.x + 1) % 21, self.y % 19
         else:
-            return self.x - 1, self.y
+            return (self.x - 1) % 21, self.y % 19
 
     def setDirect(self, direct):
         self.direct = direct
