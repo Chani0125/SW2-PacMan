@@ -278,7 +278,7 @@ class PacManGame(QWidget):
             self.map_img_label[11][y].setText("OVER!"[y - 7])
             # 스타일 설정
             over_font = self.map_img_label[11][y].font()
-            over_font.setPointSize(18)
+            over_font.setPointSize(14)
             if self.over:  # 목숨이 다 없어져 게임 오버 된 경우
                 self.map_img_label[11][y].setStyleSheet("color: yellow;"
                                                         "background-color: #000000")
@@ -477,7 +477,7 @@ class PacManGame(QWidget):
                     # READY 글자
                     self.map_img_label[x].append(QLabel("READY"[y - 7]))
                     ready_font = self.map_img_label[x][y].font()
-                    ready_font.setPointSize(18)
+                    ready_font.setPointSize(14)
                     self.map_img_label[x][y].setStyleSheet("color: yellow;"
                                                            "background-color: #000000")
                     self.map_img_label[x][y].setFont(ready_font)
